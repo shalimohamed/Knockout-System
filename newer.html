@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knockout Stage</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            text-align: center;
+            padding: 20px;
+            background-color: #333;
+            color: white;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 20px;
+        }
+
+        .round {
+            width: 300px;
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .round h2 {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .match {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .team {
+            padding: 8px 15px;
+            text-align: center;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 120px;
+        }
+
+        .team.selected {
+            background-color: #d0ffd0;
+        }
+
+        .team:hover {
+            background-color: #e0e0e0;
+        }
+
+        input {
+            width: 50px;
+            margin: 0 5px;
+            text-align: center;
+        }
+
+        #winner {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        /* Admin Panel Style */
+        #admin-panel {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #admin-panel .round {
+            background-color: #e0f7fa;
+        }
+
+        /* Results Panel Style */
+        #user-panel {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        /* Team Setup Styles */
+        #team-setup {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .team-input {
+            margin: 10px 0;
+        }
+
+        .team-input label {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Knockout Stage</h1>
+
+    <!-- Admin Login Form -->
+    <div id="login-form">
+        <h2>Admin Login</h2>
+        <input type="text" id="admin-username" placeholder="Username">
+        <input type="password" id="admin-password" placeholder="Password">
+        <button id="login-button">Login</button>
+        <div id="login-error"></div>
+    </div>
+
+<!-- Admin Panel (Hidden until login) -->
+<div id="admin-panel">
+    <div class="container" id="knockout-stage">
+
+<!-- Team Setup Section -->
+<div id="team-setup">
+    <h2>Set Team Names</h2>
+    <div class="team-input">
+        <label for="team1">Team 1:</label>
+        <input type="text" id="team1" placeholder="Enter Team 1 Name">
+    </div>
+    <div class="team-input">
+        <label for="team2">Team 2:</label>
+        <input type="text" id="team2" placeholder="Enter Team 2 Name">
+    </div>
+    <div class="team-input">
+        <label for="team3">Team 3:</label>
+        <input type="text" id="team3" placeholder="Enter Team 3 Name">
+    </div>
+    <div class="team-input">
+        <label for="team4">Team 4:</label>
+        <input type="text" id="team4" placeholder="Enter Team 4 Name">
+    </div>
+    <div class="team-input">
+        <label for="team5">Team 5:</label>
+        <input type="text" id="team5" placeholder="Enter Team 5 Name">
+    </div>
+    <div class="team-input">
+        <label for="team6">Team 6:</label>
+        <input type="text" id="team6" placeholder="Enter Team 6 Name">
+    </div>
+    <div class="team-input">
+        <label for="team7">Team 7:</label>
+        <input type="text" id="team7" placeholder="Enter Team 7 Name">
+    </div>
+    <div class="team-input">
+        <label for="team8">Team 8:</label>
+        <input type="text" id="team8" placeholder="Enter Team 8 Name">
+    </div>
+    <div class="team-input">
+        <label for="team9">Team 9:</label>
+        <input type="text" id="team9" placeholder="Enter Team 9 Name">
+    </div>
+    <div class="team-input">
+        <label for="team10">Team 10:</label>
+        <input type="text" id="team10" placeholder="Enter Team 10 Name">
+    </div>
+    <div class="team-input">
+        <label for="team11">Team 11:</label>
+        <input type="text" id="team11" placeholder="Enter Team 11 Name">
+    </div>
+    <div class="team-input">
+        <label for="team12">Team 12:</label>
+        <input type="text" id="team12" placeholder="Enter Team 12 Name">
+    </div>
+    <div class="team-input">
+        <label for="team13">Team 13:</label>
+        <input type="text" id="team13" placeholder="Enter Team 13 Name">
+    </div>
+    <div class="team-input">
+        <label for="team14">Team 14:</label>
+        <input type="text" id="team14" placeholder="Enter Team 14 Name">
+    </div>
+    <div class="team-input">
+        <label for="team15">Team 15:</label>
+        <input type="text" id="team15" placeholder="Enter Team 15 Name">
+    </div>
+    <div class="team-input">
+        <label for="team16">Team 16:</label>
+        <input type="text" id="team16" placeholder="Enter Team 16 Name">
+    </div>
+    <button id="set-teams-button">Set Teams</button>
+</div>
+
+        <!-- Round of 16 -->
+        <div class="round" id="round-16">
+            <h2>Round of 16</h2>
+            <div class="match" id="match1">
+                <div class="team" id="team1a">Team A</div>
+                <input type="number" id="score1a" placeholder="Score A">
+                <div class="team" id="team1b">Team B</div>
+                <input type="number" id="score1b" placeholder="Score B">
+                <div id="winner1"></div>
+            </div>
+            <div class="match" id="match2">
+                <div class="team" id="team2a">Team C</div>
+                <input type="number" id="score2a" placeholder="Score A">
+                <div class="team" id="team2b">Team D</div>
+                <input type="number" id="score2b" placeholder="Score B">
+                <div id="winner2"></div>
+            </div>
+            <div class="match" id="match3">
+                <div class="team" id="team3a">Team E</div>
+                <input type="number" id="score3a" placeholder="Score A">
+                <div class="team" id="team3b">Team F</div>
+                <input type="number" id="score3b" placeholder="Score B">
+                <div id="winner3"></div>
+            </div>
+            <div class="match" id="match4">
+                <div class="team" id="team4a">Team G</div>
+                <input type="number" id="score4a" placeholder="Score A">
+                <div class="team" id="team4b">Team H</div>
+                <input type="number" id="score4b" placeholder="Score B">
+                <div id="winner4"></div>
+            </div>
+            <div class="match" id="match5">
+                <div class="team" id="team5a">Team I</div>
+                <input type="number" id="score5a" placeholder="Score A">
+                <div class="team" id="team5b">Team J</div>
+                <input type="number" id="score5b" placeholder="Score B">
+                <div id="winner5"></div>
+            </div>
+            <div class="match" id="match6">
+                <div class="team" id="team6a">Team K</div>
+                <input type="number" id="score6a" placeholder="Score A">
+                <div class="team" id="team6b">Team L</div>
+                <input type="number" id="score6b" placeholder="Score B">
+                <div id="winner6"></div>
+            </div>
+            <div class="match" id="match7">
+                <div class="team" id="team7a">Team M</div>
+                <input type="number" id="score7a" placeholder="Score A">
+                <div class="team" id="team7b">Team N</div>
+                <input type="number" id="score7b" placeholder="Score B">
+                <div id="winner7"></div>
+            </div>
+            <div class="match" id="match8">
+                <div class="team" id="team8a">Team O</div>
+                <input type="number" id="score8a" placeholder="Score A">
+                <div class="team" id="team8b">Team P</div>
+                <input type="number" id="score8b" placeholder="Score B">
+                <div id="winner8"></div>
+            </div>
+        </div>
+
+        <!-- Quarter-finals -->
+        <div class="round" id="quarter-finals">
+            <h2>Quarter-finals</h2>
+            <div class="match" id="match9">
+                <div class="team" id="team9a">Winner of Match 1</div>
+                <input type="number" id="score9a" placeholder="Score A">
+                <div class="team" id="team9b">Winner of Match 2</div>
+                <input type="number" id="score9b" placeholder="Score B">
+                <div id="winner9"></div>
+            </div>
+            <div class="match" id="match10">
+                <div class="team" id="team10a">Winner of Match 3</div>
+                <input type="number" id="score10a" placeholder="Score A">
+                <div class="team" id="team10b">Winner of Match 4</div>
+                <input type="number" id="score10b" placeholder="Score B">
+                <div id="winner10"></div>
+            </div>
+            <div class="match" id="match11">
+                <div class="team" id="team11a">Winner of Match 5</div>
+                <input type="number" id="score11a" placeholder="Score A">
+                <div class="team" id="team11b">Winner of Match 6</div>
+                <input type="number" id="score11b" placeholder="Score B">
+                <div id="winner11"></div>
+            </div>
+            <div class="match" id="match12">
+                <div class="team" id="team12a">Winner of Match 7</div>
+                <input type="number" id="score12a" placeholder="Score A">
+                <div class="team" id="team12b">Winner of Match 8</div>
+                <input type="number" id="score12b" placeholder="Score B">
+                <div id="winner12"></div>
+            </div>
+        </div>
+
+        <!-- Semi-finals -->
+        <div class="round" id="semi-finals">
+            <h2>Semi-finals</h2>
+            <div class="match" id="match13">
+                <div class="team" id="team13a">Winner of Quarter-final 1</div>
+                <input type="number" id="score13a" placeholder="Score A">
+                <div class="team" id="team13b">Winner of Quarter-final 2</div>
+                <input type="number" id="score13b" placeholder="Score B">
+                <div id="winner13"></div>
+            </div>
+            <div class="match" id="match14">
+                <div class="team" id="team14a">Winner of Quarter-final 3</div>
+                <input type="number" id="score14a" placeholder="Score A">
+                <div class="team" id="team14b">Winner of Quarter-final 4</div>
+                <input type="number" id="score14b" placeholder="Score B">
+                <div id="winner14"></div>
+            </div>
+        </div>
+
+        <!-- Final -->
+        <div class="round" id="final">
+            <h2>Final</h2>
+            <div class="match" id="match15">
+                <div class="team" id="team15a">Winner of Semi-final 1</div>
+                <input type="number" id="score15a" placeholder="Score A">
+                <div class="team" id="team15b">Winner of Semi-final 2</div>
+                <input type="number" id="score15b" placeholder="Score B">
+                <div id="winner15"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Results Panel (Always visible now) -->
+<div id="user-panel">
+    <h2>Results</h2>
+    <div id="user-results">
+        <!-- Results for Round of 16 -->
+        <div id="user-round-16">
+            <h3>Round of 16</h3>
+            <div class="user-match">
+                Match 1: <span id="user-team1">Team 1</span> vs <span id="user-team2">Team 2</span> - Winner: <span id="user-winner1">TBD</span>
+            </div>
+            <div class="user-match">
+                Match 2: <span id="user-team3">Team 3</span> vs <span id="user-team4">Team 4</span> - Winner: <span id="user-winner2">TBD</span>
+            </div>
+            <div class="user-match">
+                Match 3: <span id="user-team5">Team 5</span> vs <span id="user-team6">Team 6</span> - Winner: <span id="user-winner3">TBD</span>
+            </div>
+            <div class="user-match">
+                Match 4: <span id="user-team7">Team 7</span> vs <span id="user-team8">Team 8</span> - Winner: <span id="user-winner4">TBD</span>
+            </div>
+            <div class="user-match">
+                Match 5: <span id="user-team9">Team 9</span> vs <span id="user-team10">Team 10</span> - Winner: <span id="user-winner5">TBD</span>
+            </div>
+            <div class="user-match">
+                Match 6: <span id="user-team11">Team 11</span> vs <span id="user-team12">Team 12</span> - Winner: <span id="user-winner6">TBD</span>
+            </div>
+            <div class="user-match">
+                Match 7: <span id="user-team13">Team 13</span> vs <span id="user-team14">Team 14</span> - Winner: <span id="user-winner7">TBD</span>
+            </div>
+            <div class="user-match">
+                Match 8: <span id="user-team15">Team 15</span> vs <span id="user-team16">Team 16</span> - Winner: <span id="user-winner8">TBD</span>
+            </div>
+        </div>
+
+<!-- Results for Quarter-finals -->
+<div id="user-quarter-finals">
+    <h3>Quarter-finals</h3>
+    <div class="user-match">
+       Match 9: <span id="match-winner1"> Winner of Match 1</span> vs <span id="match-winner2">Winner of Match 2 -</span> Winner: <span id="user-winner9">TBD</span>
+    </div>
+    <div class="user-match">
+        Match 10: <span id="match-winner3">Winner of Match 3</span> vs <span id="match-winner4">Winner of Match 4 -</span> Winner: <span id="user-winner10">TBD</span>
+    </div>
+    <div class="user-match">
+        Match 11: <span id="match-winner5">Winner of Match 5</span> vs <span id="match-winner6">Winner of Match 6 -</span> Winner: <span id="user-winner11">TBD</span>
+    </div>
+    <div class="user-match">
+        Match 12: <span id="match-winner7">Winner of Match 7</span> vs <span id="match-winner8">Winner of Match 8 -</span> Winner: <span id="user-winner12">TBD</span>
+    </div>
+</div>
+
+
+        <!-- Results for Semi-finals -->
+<div id="user-semi-finals">
+    <h3>Semi-finals</h3>
+    <div class="user-match">
+        Match 13: <span id="match-winner9">Winner of Match 9</span> vs <span id="match-winner10">Winner of Match 10 -</span> Winner: <span id="user-winner13">TBD</span>
+    </div>
+    <div class="user-match">
+        Match 14: <span id="match-winner11">Winner of Match 11</span> vs <span id="match-winner12">Winner of Match 12 -</span> Winner: <span id="user-winner14">TBD</span>
+    </div>
+</div>
+
+
+        <!-- Results for Final -->
+        <div id="user-final">
+            <h3>Final</h3>
+            <div class="user-match">
+                Match 15: <span id="match-winner13">Winner of Match 13</span> vs <span id="match-winner14">Winner of Match 14 -</span> Winner: <span id="user-winner15">TBD</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <script>
+        const ADMIN_USERNAME = 'admin';
+        const ADMIN_PASSWORD = 'password';
+
+// Define match pairings for the Round of 16 
+const matchPairings = {
+    roundOf16: [
+        [1, 9],  // Match 1: Team 1 vs Team 9
+        [2, 10], // Match 2: Team 2 vs Team 10
+        [3, 11], // Match 3: Team 3 vs Team 11
+        [4, 12], // Match 4: Team 4 vs Team 12
+        [5, 13], // Match 5: Team 5 vs Team 13
+        [6, 14], // Match 6: Team 6 vs Team 14
+        [7, 15], // Match 7: Team 7 vs Team 15
+        [8, 16]  // Match 8: Team 8 vs Team 16
+    ]
+     
+};
+
+// Update the user results panel with correct pairings for the Round of 16 
+function updateUserResultsPanel(teams) {
+    matchPairings.roundOf16.forEach((pair, index) => {
+        const [teamA, teamB] = pair;
+        document.getElementById(`user-team${index * 2 + 1}`).textContent = teams[teamA - 1];
+        document.getElementById(`user-team${index * 2 + 2}`).textContent = teams[teamB - 1];
+    });
+
+    // Reset winners for all matches
+    for (let i = 1; i <= 8; i++) {
+        document.getElementById(`user-winner${i}`).textContent = "TBD";
+    }
+}
+
+// Update the admin bracket with team names 
+function updateAdminBracket(teams) {
+    matchPairings.roundOf16.forEach((pair, index) => {
+        const [teamA, teamB] = pair;
+        document.getElementById(`team${index + 1}a`).textContent = teams[teamA - 1];
+        document.getElementById(`team${index + 1}b`).textContent = teams[teamB - 1];
+    });
+}
+
+
+// Announce winner for a specific match
+function announceWinner(matchNumber, winner) {
+    
+    const winnerElement = document.getElementById(`user-winner${matchNumber}`);
+    if (winnerElement) {
+        winnerElement.textContent = `Winner: ${winner}`;
+    }
+}
+
+// Event listener for "Set Teams" button (already done)
+const setTeamsButton = document.getElementById('set-teams-button');
+if (setTeamsButton) {
+    setTeamsButton.addEventListener('click', function () {
+        console.log("Updating teams...");
+        updateTeams();
+    });
+} else {
+    console.error("Set Teams button not found!");
+}
+
+// Function to update teams
+function updateTeams() {
+    const teams = [];
+    
+    // Collect team names from admin inputs
+    for (let i = 1; i <= 16; i++) {
+        const teamName = document.getElementById(`team${i}`).value || `Team ${i}`;
+        teams.push(teamName);
+    }
+
+    // Update admin bracket
+    updateAdminBracket(teams);
+
+    // Update user results panel
+    updateUserResultsPanel(teams);
+}
+
+// Function to update the quarterfinal teams in the user results panel
+function updateQuarterfinalTeams() {
+    const teams = [];
+
+    // Collect team names for the quarterfinals
+    for (let i = 1; i <= 8; i++) {
+        const teamName = document.getElementById(`teamQuarterfinal${i}`).value || `Quarterfinal Team ${i}`;
+        teams.push(teamName);
+    }
+
+    // Update user results panel with quarterfinal matchups
+    updateUserResultsPanelForQuarterfinals(teams);
+}
+
+// Function to update the user results panel with quarterfinal team names
+function updateUserResultsPanelForQuarterfinals(teams) {
+    matchPairings.quarterfinals.forEach((pair, index) => {
+        const [teamA, teamB] = pair;
+        document.getElementById(`user-quarterfinal-team${index * 2 + 1}`).textContent = teams[teamA - 1];
+        document.getElementById(`user-quarterfinal-team${index * 2 + 2}`).textContent = teams[teamB - 1];
+    });
+}
+
+        // Store match results
+let matchResults = {
+    match1: { teamA: 'Team A', teamB: 'Team B', scoreA: null, scoreB: null, winner: 'TBD' },
+    match2: { teamA: 'Team C', teamB: 'Team D', scoreA: null, scoreB: null, winner: 'TBD' },
+    match3: { teamA: 'Team E', teamB: 'Team F', scoreA: null, scoreB: null, winner: 'TBD' },
+    match4: { teamA: 'Team G', teamB: 'Team H', scoreA: null, scoreB: null, winner: 'TBD' },
+    match5: { teamA: 'Team I', teamB: 'Team J', scoreA: null, scoreB: null, winner: 'TBD' },
+    match6: { teamA: 'Team K', teamB: 'Team L', scoreA: null, scoreB: null, winner: 'TBD' },
+    match7: { teamA: 'Team M', teamB: 'Team N', scoreA: null, scoreB: null, winner: 'TBD' },
+    match8: { teamA: 'Team O', teamB: 'Team P', scoreA: null, scoreB: null, winner: 'TBD' },
+    match9: { teamA: 'Winner of Match 1', teamB: 'Winner of Match 2', scoreA: null, scoreB: null, winner: 'TBD' },
+    match10: { teamA: 'Winner of Match 3', teamB: 'Winner of Match 4', scoreA: null, scoreB: null, winner: 'TBD' },
+    match11: { teamA: 'Winner of Match 5', teamB: 'Winner of Match 6', scoreA: null, scoreB: null, winner: 'TBD' },
+    match12: { teamA: 'Winner of Match 7', teamB: 'Winner of Match 8', scoreA: null, scoreB: null, winner: 'TBD' },
+    match13: { teamA: 'Winner of Quarter-final 1', teamB: 'Winner of Quarter-final 2', scoreA: null, scoreB: null, winner: 'TBD' },
+    match14: { teamA: 'Winner of Quarter-final 3', teamB: 'Winner of Quarter-final 4', scoreA: null, scoreB: null, winner: 'TBD' },
+    match15: { teamA: 'Winner of Semi-final 1', teamB: 'Winner of Semi-final 2', scoreA: null, scoreB: null, winner: 'TBD' }
+};
+
+
+// Update Winner function
+function updateWinner(matchNumber) {
+    const scoreA = document.getElementById('score' + matchNumber + 'a').value;
+    const scoreB = document.getElementById('score' + matchNumber + 'b').value;
+
+    if (scoreA === "" || scoreB === "") return;
+
+    const scoreAInt = parseInt(scoreA);
+    const scoreBInt = parseInt(scoreB);
+
+    if (isNaN(scoreAInt) || isNaN(scoreBInt)) {
+        alert("Please enter valid scores for both teams.");
+        return;
+    }
+
+    let winnerTeam = '';
+    if (scoreAInt > scoreBInt) {
+        winnerTeam = document.getElementById('team' + matchNumber + 'a').textContent;
+    } else if (scoreBInt > scoreAInt) {
+        winnerTeam = document.getElementById('team' + matchNumber + 'b').textContent;
+    } else {
+        winnerTeam = "Draw";
+    }
+
+    // Update the match result
+    matchResults['match' + matchNumber].scoreA = scoreAInt;
+    matchResults['match' + matchNumber].scoreB = scoreBInt;
+    matchResults['match' + matchNumber].winner = winnerTeam;
+
+    // Display the winner in the current match
+    document.getElementById('winner' + matchNumber).textContent = winnerTeam;
+
+    // Transfer winners from Round of 16 to Quarter-finals
+    if (matchNumber >= 1 && matchNumber <= 8) {
+        const quarterMatch = Math.ceil(matchNumber / 2);
+        const quarterMatchIndex = 8 + quarterMatch;
+        
+        if (matchNumber % 2 === 1) {
+            document.getElementById('team' + quarterMatchIndex + 'a').textContent = winnerTeam;
+        } else {
+            document.getElementById('team' + quarterMatchIndex + 'b').textContent = winnerTeam;
+        }
+    }
+
+// Transfer winners from Quarter-finals to Semi-finals
+if (matchNumber >= 9 && matchNumber <= 12) {
+    const semiMatch = matchNumber - 8; // SF1 for QF1 and QF2, SF2 for QF3 and QF4
+
+    // Fix logic here: match 9 and 10 belong to SF1, 11 and 12 belong to SF2
+    if (semiMatch === 1 || semiMatch === 2) { // SF1
+        if (matchNumber % 2 === 1) {
+            document.getElementById('team13a').textContent = winnerTeam; // SF1 - A
+        } else {
+            document.getElementById('team13b').textContent = winnerTeam; // SF1 - B
+        }
+    } else { // SF2
+        if (matchNumber % 2 === 1) {
+            document.getElementById('team14a').textContent = winnerTeam; // SF2 - A
+        } else {
+            document.getElementById('team14b').textContent = winnerTeam; // SF2 - B
+        }
+    }
+}
+
+    // Transfer winners from Semi-finals to Final
+    if (matchNumber >= 13 && matchNumber <= 14) {
+        const finalMatch = matchNumber - 12;
+        const finalMatchIndex = 15;
+
+        if (matchNumber % 2 === 1) {
+            document.getElementById('team' + finalMatchIndex + 'a').textContent = winnerTeam;
+        } else {
+            document.getElementById('team' + finalMatchIndex + 'b').textContent = winnerTeam;
+        }
+    }
+
+    // Display updated results in the user panel
+    displayUserResults();
+}
+
+// Function to display results in the user panel
+function displayUserResults() {
+    for (let matchNum = 1; matchNum <= 15; matchNum++) {
+        const winner = matchResults['match' + matchNum].winner;
+        document.getElementById('user-winner' + matchNum).textContent = winner;
+	if(winner != 'TBD')
+	{
+		document.getElementById('match-winner' + matchNum).textContent = winner;
+	}
+    }
+}
+
+        // Admin login function
+        function loginAdmin() {
+            const username = document.getElementById('admin-username').value;
+            const password = document.getElementById('admin-password').value;
+            const loginError = document.getElementById('login-error');
+
+            if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+                document.getElementById('login-form').style.display = 'none';
+                document.getElementById('admin-panel').style.display = 'block';
+                enableAdminControls();
+            } else {
+                loginError.textContent = 'Invalid username or password.';
+            }
+        }
+
+        // Enable admin controls after login
+        function enableAdminControls() {
+            const matches = document.querySelectorAll('.match');
+            matches.forEach((match) => {
+                const scoreInputA = match.querySelector('input[id^="score"]');
+                const scoreInputB = match.querySelector('input[id^="score"]:nth-of-type(2)');
+                scoreInputA.addEventListener('input', (e) => updateWinner(parseInt(e.target.closest('.match').id.replace('match', ''))));
+                scoreInputB.addEventListener('input', (e) => updateWinner(parseInt(e.target.closest('.match').id.replace('match', ''))));
+            });
+        }
+
+        // Attach login event listener
+        document.getElementById('login-button').addEventListener('click', loginAdmin);
+    </script>
+</body>
+</html>
